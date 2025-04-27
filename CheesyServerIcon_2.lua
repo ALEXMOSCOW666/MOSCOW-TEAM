@@ -139,7 +139,7 @@ local function positionImage(image, position, debug, scaleOverride)
 
 end
 
-local creditTimer = 10
+local creditTimer = 0.5
 local creditPos = 0
 function script.update(dt)
     ac.debug('Driver In Setup Menu', ac.getSim().isInMainMenu)

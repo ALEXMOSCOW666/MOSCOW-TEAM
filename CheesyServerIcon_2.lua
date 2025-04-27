@@ -11,7 +11,7 @@ ui.setAsynchronousImagesLoading(true)
 
 -- 👇 Указываем нужные ссылки на гифки
 local image_0_source = 'https://i.imgur.com/WsxqQfA.gif'  -- левая гифка
-local image_1_source = 'https://avatars.mds.yandex.net/i?id=63f197fb95e788c27430d62179662491_l-9700546-images-thumbs&n=13'  -- центральная гифка
+local image_1_source = 'https://avatars.mds.yandex.net/i?id=63f197fb95e788c27430d62179662491_l-9700546-images-thumbs&n=13.jpg'  -- центральная гифка
 
 -- ⏱️ Таймер на 5 секунд для центральной гифки
 local centerImageTimer = 5.0

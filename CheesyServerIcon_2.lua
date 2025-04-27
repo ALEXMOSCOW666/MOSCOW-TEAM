@@ -11,7 +11,7 @@ local debugFlash, debugImage, debugLines, imageMetaLoaded = false, false, false,
 setInterval(function () debugFlash = not debugFlash end, 0.5)
 ui.setAsynchronousImagesLoading(true)
 
-local image_0_source = 'https://raw.githubusercontent.com/CheesyManiac/cheesy-lua/main/server-scripts/iconScript/rocketIcon.gif'
+local image_0_source = 'https://i.imgur.com/ghi35Hg.gif'
 local image_1_source = ''
 
 -- ⏱️ Переменные для контроля показа центральной анимации

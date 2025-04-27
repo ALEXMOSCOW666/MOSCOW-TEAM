@@ -1,6 +1,4 @@
 --CheesyManiac Server Icon Script v2.0
---Original Source: https://github.com/CheesyManiac/cheesy-lua/
---Distributed under the GNU GPL v3.0 License
 
 local scriptVersion = "2.0"
 ac.debug("1. Cheesy Icon Script", 'v'..scriptVersion)
@@ -11,10 +9,11 @@ local debugFlash, debugImage, debugLines, imageMetaLoaded = false, false, false,
 setInterval(function () debugFlash = not debugFlash end, 0.5)
 ui.setAsynchronousImagesLoading(true)
 
-local image_0_source = 'https://i.imgur.com/ghi35Hg.gif'
-local image_1_source = ''
+-- 👇 Указываем нужные ссылки на гифки
+local image_0_source = 'https://i.imgur.com/WsxqQfA.gif'  -- левая гифка
+local image_1_source = 'https://i.imgur.com/ghi35Hg.gif'  -- центральная гифка
 
--- ⏱️ Переменные для контроля показа центральной анимации
+-- ⏱️ Таймер на 5 секунд для центральной гифки
 local centerImageTimer = 5.0
 local centerImageVisible = true
 
@@ -33,9 +32,9 @@ local function loadImageMeta()
             ['src'] = ui.GIFPlayer(image_1_source),
             ['sizeX'] = ui.imageSize(image_1_source).x,
             ['sizeY'] = ui.imageSize(image_1_source).y,
-            ['paddingX'] = 0,
-            ['paddingY'] = 0,
-            ['scale'] = 1
+            ['paddingX'] = 10,
+            ['paddingY'] = 10,
+            ['scale'] = 0.5
         }
 
         imageMetaLoaded = imageMetaLoaded + 1
@@ -99,7 +98,7 @@ function script.update(dt)
         end
         creditPos = (-0.01 * 10^(-2 * creditTimer + math.log(500)/math.log(10)) + 2) * 20
 
-        -- ⏱️ Обновление таймера центральной гифки
+        -- ⏱️ Обновление таймера для центральной гифки
         if centerImageVisible then
             centerImageTimer = centerImageTimer - dt
             if centerImageTimer <= 0 then
@@ -132,11 +131,11 @@ function script.drawUI()
         drawdebugLines()
     end
 
-    -- Левая позиция показывается всегда
+    -- 👈 Левая гифка (всегда)
     positionImage(image_0, 'center_left', debugImage)
 
-    -- Центральная позиция — только если таймер ещё не истёк
+    -- 🎯 Центральная гифка (только 5 секунд)
     if centerImageVisible then
-        positionImage(image_0, 'center_center', debugImage)
+        positionImage(image_1, 'center_center', debugImage)
     end
 end

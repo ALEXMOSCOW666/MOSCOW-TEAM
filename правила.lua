@@ -54,5 +54,5 @@ function script.drawUI()
             end
             script.hideBanner = true
         end
-    end)
+    end
 end

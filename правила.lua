@@ -1,104 +1,58 @@
-using AssettoServer.Shared.Network.Http;
-using AssettoServer.Server.Plugin;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+local storage = ac.storage({
+    dontShowAgain = false
+})
 
-public class ConnectRulesPlugin : IAssettoServerPlugin
-{
-    private const string ImageUrl = "http://xxx.jpg";
-    private const string RuleText = "xxx\nxxx";
-    private const string DiscordInviteUrl = "https://xxx";
-    private const string ServerWebsiteUrl = "http://xxx";
-    private const string ButtonText = "I understand and accept the rules";
+local Image = "content/cars/mt_toyota_chaser_jzx100/texture/flames/rules.png"
 
-    public void ConfigureServices(IServiceCollection services)
-    {
-    }
+script.dontShowAgain = storage.dontShowAgain
+script.checkboxValue = false
+script.hideBanner = false
 
-    public void ConfigureApplication(IApplicationBuilder app)
-    {
-        app.UseMiddleware<ConnectRulesMiddleware>();
-    }
-}
+function script.drawUI()
+    if script.hideBanner or script.dontShowAgain then return end
 
-public class ConnectRulesMiddleware : IMiddleware
-{
-    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
-    {
-        if (context.Request.Path == "/api/connected_clients")
-        {
-            var connectedClients = await context.RequestServices.GetService<IConnectedClients>().GetClientsAsync();
+    local imgSize = vec2(1536, 1024) -- You can adjust this to fit your image size.
+    local buttonSize = vec2(80, 25)
+    local winSize = imgSize
+    local screenSize = ui.windowSize()
+    local centerPos = (screenSize - winSize) / 2
 
-            await context.Response.WriteAsync(GetModalHtml());
-        }
-        else
-        {
-            await next(context);
-        }
-    }
+    ui.transparentWindow("WelcomeBanner", centerPos, winSize, function()
+        ui.drawImage(Image, vec2(0, 0), imgSize)
 
-    private string GetModalHtml()
-    {
-        string cssStyle = @"
-            body {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin: 0;
-                background-color: rgba(0, 0, 0, 0.5);
-                backdrop-filter: blur(10px);
-            }
-            .modal {
-                background-color: black;
-                color: white;
-                padding: 20px;
-                border-radius: 5px;
-                max-width: 80%;
-                text-align: center;
-            }
-            .modal img {
-                max-width: 200px;
-                margin-bottom: 20px;
-            }
-            .modal pre {
-                text-align: left;
-                white-space: pre-wrap;
-                margin-bottom: 20px;
-            }
-            .modal p {
-                margin-bottom: 10px;
-            }
-            .modal a {
-                color: white;
-                text-decoration: underline;
-            }
-            .modal button {
-                background-color: white;
-                color: black;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-        ";
-        return $@"
-            <html>
-                <head>
-                    <style>{cssStyle}</style>
-                </head>
-                <body>
-                    <div class='modal'>
-                        <img src='{ImageUrl}' />
-                        <pre>{RuleText}</pre>
-                        <p>You can also join our <a href='{DiscordInviteUrl}' target='_blank'>Discord server</a> to stay up to date with the latest news and events.</p>
-                        <p>You can also find the list of our servers on our <a href='{ServerWebsiteUrl}' target='_blank'>website</a>.</p>
-                        <button>{ButtonText}</button>
-                    </div>
-                </body>
-            </html>
-        ";
-    }
-}
+        local cbPos = vec2(40, imgSize.y - 45)
+        local cbSize = vec2(25, 25)
+        ui.drawRect(cbPos, cbPos + cbSize, rgbm(1, 0.5, 0.8, 1))
+        if script.checkboxValue then
+            ui.setCursor(cbPos + vec2(0, 0))
+            ui.pushFont(ui.Font.Title)
+            ui.text("☑️")
+            ui.popFont()
+        end
+        ui.setCursor(cbPos + vec2(30, 5))
+        ui.text("Больше не показывать")
+        if ui.rectHovered(cbPos, cbPos + cbSize) and ui.mouseClicked(0) then
+            script.checkboxValue = not script.checkboxValue
+        end
+
+        local buttonX = (imgSize.x - buttonSize.x) / 2
+        local buttonY = imgSize.y - buttonSize.y - 20
+        local buttonPos = vec2(buttonX, buttonY)
+        ui.drawRect(buttonPos, buttonPos + buttonSize, rgbm(1, 0.5, 0.8, 1))
+        local label = "Принять"
+        local textSize = ui.measureText(label)
+        local textPos = buttonPos + (buttonSize - textSize) / 2
+        ui.setCursor(textPos)
+        ui.text(label)
+        if ui.rectHovered(buttonPos, buttonPos + buttonSize) and ui.mouseClicked(0) then
+            if script.checkboxValue then
+                storage.dontShowAgain = true
+                script.dontShowAgain = true
+            else
+                storage.dontShowAgain = false
+                script.dontShowAgain = false
+            end
+            script.hideBanner = true
+        end
+    end)
+end
